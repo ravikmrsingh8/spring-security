@@ -18,8 +18,9 @@ public class SecurityConfig {
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        return http.addFilterAt(filter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeRequests().anyRequest().authenticated().and().build();
+        http.addFilterAt(filter, UsernamePasswordAuthenticationFilter.class);
+        http.authorizeHttpRequests(authorize->authorize.anyRequest().authenticated());
+        return http.build();
     }
 
 }
