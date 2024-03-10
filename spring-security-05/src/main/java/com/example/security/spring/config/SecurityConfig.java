@@ -22,8 +22,10 @@ public class SecurityConfig {
         http.httpBasic(Customizer.withDefaults());
         // requestMatcher should be configured first before anyRequest
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/precious").hasAuthority("Precious")
-                .anyRequest().hasAuthority("Read")
+                .requestMatchers("/api/precious").hasAuthority("Precious")
+                .requestMatchers("/api/bonjour").hasAuthority("FrenchGreet")
+                .requestMatchers("/api/**").hasAuthority("Read")
+                .anyRequest().authenticated()
         );
 
         return http.build();
@@ -36,12 +38,19 @@ public class SecurityConfig {
                 .password(passwordEncoder().encode("password"))
                 .authorities("Read", "Write", "Precious")
                 .build();
-
         UserDetails user2 = User.withUsername("bill")
                 .password(passwordEncoder().encode("password"))
                 .authorities("Read")
                 .build();
-        return new InMemoryUserDetailsManager(List.of(user1, user2));
+        UserDetails user3 = User.withUsername("macron")
+                .password(passwordEncoder().encode("password"))
+                .authorities("Read", "FrenchGreet")
+                .build();
+        UserDetails user4 = User.withUsername("dud")
+                .password(passwordEncoder().encode("password"))
+                .build();
+
+        return new InMemoryUserDetailsManager(List.of(user1, user2, user3, user4));
     }
 
     @Bean
